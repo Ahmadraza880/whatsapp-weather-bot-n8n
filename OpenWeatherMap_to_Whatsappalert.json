@@ -1,0 +1,179 @@
+{
+  "name": "OpenWeatherMap_to_Whatsappalert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp_weather",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        80
+      ],
+      "id": "70b2ffb6-d1ff-4e41-aa8c-ff18adb6652f",
+      "name": "Whatsapp Trigger",
+      "webhookId": "271ff3ec-5f1c-4f56-a096-77546e133385"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1adbbdf-d6e9-437c-afcb-448eed0afa11",
+              "name": "city",
+              "value": "={{ $json.body.Body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -120,
+        -80
+      ],
+      "id": "31d3c937-a1fe-472b-974c-2bdb9e2f09db",
+      "name": "Set city"
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.city }}"
+            },
+            {
+              "name": "appid",
+              "value": "0c7c57f9454e085d057f766a1f1ffc6e"
+            },
+            {
+              "name": "units",
+              "value": "metric"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        80
+      ],
+      "id": "dc592a1f-12e7-4fe9-a5d3-124c0f3f3311",
+      "name": "Get Weather"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0770ed3-5473-4ccb-a407-5a9588df8e29",
+              "name": "weather_message",
+              "value": "={{$json.weather[0].main + \" - \" + $json.main.temp + \"°C in \" + $json.name}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -80
+      ],
+      "id": "7bf6094d-6ab7-43f4-8b23-127766e629ac",
+      "name": "Set Weather"
+    },
+    {
+      "parameters": {
+        "from": "+14155238886",
+        "to": "+923186158031",
+        "toWhatsapp": true,
+        "message": "={{ $json.weather_message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        420,
+        80
+      ],
+      "id": "b8d6b828-1220-4a50-95b3-af31ab1258cd",
+      "name": "Send to Whatsapp",
+      "credentials": {
+        "twilioApi": {
+          "id": "jpYA5jT4xMz5OmAN",
+          "name": "Twilio account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Whatsapp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set city",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set city": {
+      "main": [
+        [
+          {
+            "node": "Get Weather",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Weather": {
+      "main": [
+        [
+          {
+            "node": "Set Weather",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Weather": {
+      "main": [
+        [
+          {
+            "node": "Send to Whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9eece888-ab1b-422c-8d4e-ad3046c1a730",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2de80f5914130ddac7b892de4e5de570f30cd22f0b2bd794e45e389d7524d1e9"
+  },
+  "id": "5Bcl2qjufPm9yfpE",
+  "tags": []
+}
