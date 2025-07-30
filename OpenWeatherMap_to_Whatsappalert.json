@@ -52,7 +52,7 @@
             },
             {
               "name": "appid",
-              "value": "0c7c57f9454e085d057f766a1f1ffc6e"
+              "value": "your weather api"
             },
             {
               "name": "units",
@@ -97,7 +97,7 @@
     {
       "parameters": {
         "from": "+14155238886",
-        "to": "+923186158031",
+        "to": "yournumber",
         "toWhatsapp": true,
         "message": "={{ $json.weather_message }}",
         "options": {}
